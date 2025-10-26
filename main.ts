@@ -35,12 +35,12 @@ server.registerResource(
 
 server.registerResource(
   'joke-widget',
-  'ui://widget/joke2.html',
+  'ui://widget/joke3.html',
   {},
   async () => ({
     contents: [
       {
-        uri: 'ui://widget/joke2.html',
+        uri: 'ui://widget/joke3.html',
         mimeType: "text/html+skybridge",
         text: `
         <style>
@@ -50,6 +50,10 @@ server.registerResource(
         <div id="dad-joke">
           <p>Dad joke will appear here</p>
         </div>
+        <script>
+          const container = document.querySelector('#dad-joke p');
+          container.textContent = openai.toolOutput.joke;
+        </script>
         `,
         _meta: {
           "openai/widgetPrefersBorder": true,          
@@ -68,7 +72,7 @@ server.registerTool(
     title: 'Joke Teller',
     description: `Tells a joke according to its index. Valid ids 0-${dadJokes.all.length - 1}`,    
     _meta: {
-      "openai/outputTemplate": "ui://widget/joke2.html",
+      "openai/outputTemplate": "ui://widget/joke3.html",
       "openai/toolInvocation/invoking": "Displaying a joke",
       "openai/toolInvocation/invoked": "Displayed a joke"
     },
@@ -80,12 +84,8 @@ server.registerTool(
   },
   async ({id}) => {
     return ({
-      content: [
-        {
-          type: 'text',
-          text: dadJokes.all[id],
-        }
-      ]
+      content: [],
+      structuredContent: {joke: dadJokes.all[id] }
     })
   }
 )
@@ -96,7 +96,7 @@ server.registerTool(
     title: 'Random Joke Teller',
     description: 'Tells a random joke',    
     _meta: {
-      "openai/outputTemplate": "ui://widget/joke2.html",
+      "openai/outputTemplate": "ui://widget/joke3.html",
       "openai/toolInvocation/invoking": "Displaying a joke",
       "openai/toolInvocation/invoked": "Displayed a joke"
     },    
@@ -108,12 +108,8 @@ server.registerTool(
   },
   async () => {
     return ({
-      content: [
-        {
-          type: 'text',
-          text: `${dadJokes.random()}`,
-        }
-      ]
+      content: [],
+      structuredContent: {joke: dadJokes.random() }
     })
   }
 );
