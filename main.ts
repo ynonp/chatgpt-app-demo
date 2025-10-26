@@ -35,18 +35,19 @@ server.registerResource(
 
 server.registerResource(
   'joke-widget',
-  'ui://widget/joke.html',
+  'ui://widget/joke2.html',
   {},
   async () => ({
     contents: [
       {
-        uri: 'ui://widget/joke.html',
+        uri: 'ui://widget/joke2.html',
         mimeType: "text/html+skybridge",
         text: `
+        <style>
+          #dad-joke { height: 300px; }
+          p { color: green; font-size: 48px }          
+        </style>
         <div id="dad-joke">
-          <style>
-            p { color: 'green' }
-          </style>
           <p>Dad joke will appear here</p>
         </div>
         `,
@@ -67,10 +68,15 @@ server.registerTool(
     title: 'Joke Teller',
     description: `Tells a joke according to its index. Valid ids 0-${dadJokes.all.length - 1}`,    
     _meta: {
-      "openai/outputTemplate": "ui://widget/joke.html",
+      "openai/outputTemplate": "ui://widget/joke2.html",
       "openai/toolInvocation/invoking": "Displaying a joke",
       "openai/toolInvocation/invoked": "Displayed a joke"
     },
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true,
+    }
   },
   async ({id}) => {
     return ({
@@ -90,10 +96,15 @@ server.registerTool(
     title: 'Random Joke Teller',
     description: 'Tells a random joke',    
     _meta: {
-      "openai/outputTemplate": "ui://widget/joke.html",
+      "openai/outputTemplate": "ui://widget/joke2.html",
       "openai/toolInvocation/invoking": "Displaying a joke",
       "openai/toolInvocation/invoked": "Displayed a joke"
     },    
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true,
+    }    
   },
   async () => {
     return ({
