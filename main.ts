@@ -33,6 +33,31 @@ server.registerResource(
   }
 )
 
+server.registerResource(
+  'joke-widget',
+  'ui://widget/joke.html',
+  {},
+  async () => ({
+    contents: [
+      {
+        uri: 'ui://widget/joke.html',
+        mimeType: "text/html+skybridge",
+        text: `
+        <div id="dad-joke">
+          <style>
+            p { color: 'green' }
+          </style>
+          <p>Dad joke will appear here</p>
+        </div>
+        `,
+        _meta: {
+          "openai/widgetPrefersBorder": true,          
+        }
+      }
+    ]
+  })
+)
+
 server.registerTool(
   "tell-me-a-joke",
   {
@@ -41,6 +66,11 @@ server.registerTool(
     },
     title: 'Joke Teller',
     description: `Tells a joke according to its index. Valid ids 0-${dadJokes.all.length - 1}`,    
+    _meta: {
+      "openai/outputTemplate": "ui://widget/joke.html",
+      "openai/toolInvocation/invoking": "Displaying a joke",
+      "openai/toolInvocation/invoked": "Displayed a joke"
+    },
   },
   async ({id}) => {
     return ({
@@ -59,6 +89,11 @@ server.registerTool(
   {
     title: 'Random Joke Teller',
     description: 'Tells a random joke',    
+    _meta: {
+      "openai/outputTemplate": "ui://widget/joke.html",
+      "openai/toolInvocation/invoking": "Displaying a joke",
+      "openai/toolInvocation/invoked": "Displayed a joke"
+    },    
   },
   async () => {
     return ({
