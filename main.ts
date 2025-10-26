@@ -35,12 +35,12 @@ server.registerResource(
 
 server.registerResource(
   'joke-widget',
-  'ui://widget/joke3.html',
+  'ui://widget/joke4.html',
   {},
   async () => ({
     contents: [
       {
-        uri: 'ui://widget/joke3.html',
+        uri: 'ui://widget/joke4.html',
         mimeType: "text/html+skybridge",
         text: `
         <style>
@@ -52,7 +52,11 @@ server.registerResource(
         </div>
         <script>
           const container = document.querySelector('#dad-joke p');
-          container.textContent = openai.toolOutput.joke;
+          if (openai.toolOutput && openai.toolOutput.joke) {
+            container.textContent = openai.toolOutput.joke;
+          } else {
+            container.textContent = "Wait for it...";
+          }          
         </script>
         `,
         _meta: {
@@ -72,7 +76,7 @@ server.registerTool(
     title: 'Joke Teller',
     description: `Tells a joke according to its index. Valid ids 0-${dadJokes.all.length - 1}`,    
     _meta: {
-      "openai/outputTemplate": "ui://widget/joke3.html",
+      "openai/outputTemplate": "ui://widget/joke4.html",
       "openai/toolInvocation/invoking": "Displaying a joke",
       "openai/toolInvocation/invoked": "Displayed a joke"
     },
@@ -96,7 +100,7 @@ server.registerTool(
     title: 'Random Joke Teller',
     description: 'Tells a random joke',    
     _meta: {
-      "openai/outputTemplate": "ui://widget/joke3.html",
+      "openai/outputTemplate": "ui://widget/joke4.html",
       "openai/toolInvocation/invoking": "Displaying a joke",
       "openai/toolInvocation/invoked": "Displayed a joke"
     },    
