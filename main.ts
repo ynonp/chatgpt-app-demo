@@ -7,6 +7,19 @@ import express from 'express';
 
 const templateURI = 'ui://widget/joke5.html';
 
+const manifest = {
+  name: "Demo MCP Server",
+  version: "1.0.0",
+  mcp: {
+    servers: {
+      default: {
+        transport: "http",
+        url: "https://chatgpt-app-demo.ynonp.deno.net/mcp"
+      }
+    }
+  }
+};
+
 // Create server instance
 const server = new McpServer({
   name: "dadjokes",
@@ -125,6 +138,12 @@ server.registerTool(
 const app = express();
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+
 app.post('/mcp', async (req: any, res: any) => {
     // Create a new transport for each request to prevent request ID collisions
     const transport = new StreamableHTTPServerTransport({
@@ -138,6 +157,14 @@ app.post('/mcp', async (req: any, res: any) => {
 
     await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
+});
+
+app.get('/manifest.json', (req, res) => {
+  res.set({
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*"
+  });
+  res.send(JSON.stringify(manifest));
 });
 
 const port = parseInt(process.env.PORT || '3000');
